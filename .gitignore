@@ -1,0 +1,10 @@
+.env
+.env.local
+.DS_Store
+dist/
+state/
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.pyc

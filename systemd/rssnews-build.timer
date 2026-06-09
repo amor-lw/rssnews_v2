@@ -1,0 +1,10 @@
+[Unit]
+Description=Run RSS feed build daily
+
+[Timer]
+OnCalendar=*-*-* 06:00:00
+Persistent=true
+Unit=rssnews-build.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,26 @@
+{
+  "notes": [
+    "HN Hot is intentionally separate from the main hot-news pipeline.",
+    "These queries search HN Algolia historical stories by topic keywords.",
+    "They are not used to decide news.xml or radar.xml membership.",
+    "Use concise OR expressions and keep every query focused on one durable reading theme."
+  ],
+  "queries": [
+    {
+      "name": "ai-learning",
+      "query": "\"AI learning\" OR \"learn AI\" OR \"machine learning course\" OR \"LLM learning\"",
+      "min_points": 100,
+      "item_limit": 20,
+      "enabled": true,
+      "notes": "Historical learning resources for AI/ML/LLM study. This is keyword driven by design and belongs only in hn-hot.xml."
+    },
+    {
+      "name": "devops-classics",
+      "query": "Kubernetes OR Postgres OR Linux OR observability OR \"distributed systems\"",
+      "min_points": 150,
+      "item_limit": 20,
+      "enabled": true,
+      "notes": "Durable engineering infrastructure classics. This is keyword driven by design and belongs only in hn-hot.xml."
+    }
+  ]
+}

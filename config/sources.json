@@ -1,0 +1,96 @@
+{
+  "source_weights": {
+    "Hacker News": 0.9,
+    "NewsAPI": 0.7,
+    "CISA KEV": 1.0,
+    "CISA Cybersecurity Advisories": 0.95,
+    "AWS News Blog": 0.78,
+    "Cloudflare Blog": 0.86,
+    "GitHub Blog": 0.82,
+    "OpenAI News": 0.9,
+    "Harvard Business Review": 0.85,
+    "Child Mind Institute": 0.74
+  },
+  "newsapi": {
+    "top_headlines_languages": [
+      "en"
+    ],
+    "top_headlines_category": null,
+    "top_headlines_country": "us"
+  },
+  "sources": {
+    "rss_sources": [
+      {
+        "name": "CISA Cybersecurity Advisories",
+        "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+        "limit": 20,
+        "max_age_hours": 168,
+        "enabled": false,
+        "hot_signal": true,
+        "verification_only": false,
+        "hot_signal_type": "security_advisory",
+        "disabled_reason": "CISA RSS returned 403 in the old project; keep CISA KEV JSON enabled instead."
+      },
+      {
+        "name": "AWS News Blog",
+        "url": "https://aws.amazon.com/blogs/aws/feed/",
+        "limit": 20,
+        "max_age_hours": 168,
+        "enabled": true,
+        "hot_signal": false,
+        "verification_only": true,
+        "hot_signal_type": "vendor_rss"
+      },
+      {
+        "name": "Cloudflare Blog",
+        "url": "https://blog.cloudflare.com/rss/",
+        "limit": 20,
+        "max_age_hours": 168,
+        "enabled": true,
+        "hot_signal": false,
+        "verification_only": true,
+        "hot_signal_type": "vendor_rss"
+      },
+      {
+        "name": "GitHub Blog",
+        "url": "https://github.blog/feed/",
+        "limit": 20,
+        "max_age_hours": 168,
+        "enabled": true,
+        "hot_signal": false,
+        "verification_only": true,
+        "hot_signal_type": "vendor_rss"
+      },
+      {
+        "name": "OpenAI News",
+        "url": "https://openai.com/news/rss.xml",
+        "limit": 20,
+        "max_age_hours": 168,
+        "enabled": true,
+        "hot_signal": false,
+        "verification_only": true,
+        "hot_signal_type": "vendor_rss"
+      },
+      {
+        "name": "Harvard Business Review",
+        "url": "http://feeds.harvardbusiness.org/harvardbusiness?format=xml",
+        "limit": 20,
+        "max_age_hours": 168,
+        "enabled": true,
+        "hot_signal": false,
+        "verification_only": true,
+        "hot_signal_type": "editorial_rss"
+      },
+      {
+        "name": "Child Mind Institute",
+        "url": "https://childmind.org/feed/",
+        "limit": 10,
+        "max_age_hours": 336,
+        "enabled": true,
+        "hot_signal": false,
+        "verification_only": true,
+        "hot_signal_type": "editorial_rss"
+      }
+    ]
+  }
+}

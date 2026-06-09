@@ -1,0 +1,13 @@
+[Unit]
+Description=Serve RSS static files on a dedicated port
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/rssnews
+ExecStart=/bin/bash /opt/rssnews/serve_rss.sh
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

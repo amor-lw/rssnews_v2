@@ -1,0 +1,9 @@
+[Unit]
+Description=Build and publish RSS feeds
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/rssnews
+ExecStart=/bin/bash /opt/rssnews/deploy_sync.sh
