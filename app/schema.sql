@@ -211,7 +211,6 @@ CREATE TABLE IF NOT EXISTS rule_settings (
 
 CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles(published_at);
 CREATE INDEX IF NOT EXISTS idx_articles_domain ON articles(domain);
-CREATE INDEX IF NOT EXISTS idx_articles_source_rank ON articles(source_family, source_list, source_rank);
 CREATE INDEX IF NOT EXISTS idx_classifications_bucket ON classifications(bucket, profile, importance_score);
 CREATE INDEX IF NOT EXISTS idx_feed_items_feed_rank ON feed_items(feed_name, rank);
 CREATE INDEX IF NOT EXISTS idx_feedback_events_guid ON feedback_events(article_guid);

@@ -846,6 +846,57 @@ class PipelineTests(unittest.TestCase):
             saved = admin_rows(conn, "saved_articles")
             self.assertEqual(saved[0]["article_guid"], "guid-cve")
 
+    def test_database_init_migrates_existing_v1_tables_before_v2_indexes(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            conn = connect_database(Path(tmpdir) / "rssnews.db")
+            conn.execute(
+                """
+                CREATE TABLE articles (
+                  guid TEXT PRIMARY KEY,
+                  canonical_url TEXT NOT NULL UNIQUE,
+                  title TEXT NOT NULL,
+                  url TEXT NOT NULL,
+                  domain TEXT NOT NULL DEFAULT '',
+                  source_name TEXT NOT NULL,
+                  source_type TEXT NOT NULL DEFAULT '',
+                  published_at TEXT NOT NULL,
+                  discovered_at TEXT NOT NULL,
+                  summary TEXT NOT NULL DEFAULT '',
+                  content_text TEXT NOT NULL DEFAULT '',
+                  lang TEXT,
+                  hn_id INTEGER,
+                  hn_points REAL NOT NULL DEFAULT 0,
+                  hn_comments INTEGER NOT NULL DEFAULT 0,
+                  raw_json TEXT NOT NULL DEFAULT '{}',
+                  updated_at TEXT NOT NULL
+                )
+                """
+            )
+            conn.execute(
+                """
+                CREATE TABLE hn_hot_items (
+                  query_name TEXT NOT NULL,
+                  article_guid TEXT NOT NULL,
+                  rank INTEGER NOT NULL DEFAULT 0,
+                  points REAL NOT NULL DEFAULT 0,
+                  comments INTEGER NOT NULL DEFAULT 0,
+                  fetched_at TEXT NOT NULL,
+                  persistent INTEGER NOT NULL DEFAULT 1,
+                  PRIMARY KEY (query_name, article_guid)
+                )
+                """
+            )
+
+            init_database(conn, Path(tmpdir))
+
+            article_cols = {row["name"] for row in conn.execute("PRAGMA table_info(articles)").fetchall()}
+            hn_hot_cols = {row["name"] for row in conn.execute("PRAGMA table_info(hn_hot_items)").fetchall()}
+            indexes = {row["name"] for row in conn.execute("PRAGMA index_list(articles)").fetchall()}
+            self.assertIn("source_family", article_cols)
+            self.assertIn("source_rank", article_cols)
+            self.assertIn("matched_terms_json", hn_hot_cols)
+            self.assertIn("idx_articles_source_rank", indexes)
+
     def test_database_migrates_legacy_feedback_json_idempotently(self) -> None:
         with TemporaryDirectory() as tmpdir:
             state_dir = Path(tmpdir)

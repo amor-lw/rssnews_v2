@@ -33,6 +33,7 @@ def connect_database(path: Path | str) -> sqlite3.Connection:
 def init_database(conn: sqlite3.Connection, state_dir: Path | None = None, hn_hot_queries: Sequence[Dict[str, Any]] | None = None) -> None:
     conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
     ensure_v2_columns(conn)
+    ensure_v2_indexes(conn)
     conn.execute(
         "INSERT OR IGNORE INTO schema_migrations(version, applied_at) VALUES (?, ?)",
         (1, utc_iso()),
@@ -70,6 +71,10 @@ def ensure_columns(conn: sqlite3.Connection, table: str, additions: Dict[str, st
     for name, definition in additions.items():
         if name not in existing:
             conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {definition}")
+
+
+def ensure_v2_indexes(conn: sqlite3.Connection) -> None:
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_articles_source_rank ON articles(source_family, source_list, source_rank)")
 
 
 def article_domain(url: str) -> str:
