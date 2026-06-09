@@ -2,7 +2,7 @@
 
 ## 目标
 
-`rssnews_v2` 将作为旧项目 `/Users/amor/Code/rssnews` 的替换者部署到原服务器。项目的文件结构、运行方式、部署流程、systemd 模型、SQLite 状态库、静态发布目录和后台/反馈能力可以沿用旧项目；核心差异是新闻获取与入选逻辑：
+`rssnews_v2` 将作为旧项目 `/Users/user1/Code/rssnews` 的替换者部署到原服务器。项目的文件结构、运行方式、部署流程、systemd 模型、SQLite 状态库、静态发布目录和后台/反馈能力可以沿用旧项目；核心差异是新闻获取与入选逻辑：
 
 - 不再以个人关键词作为抓取和筛选入口。
 - 只抓各平台、新闻 API 或新闻源已经标记为热点、头条、热门、Top、Best、Trending 的候选。
@@ -11,7 +11,7 @@
 
 ## 旧项目可沿用的部分
 
-参考旧项目 `/Users/amor/Code/rssnews`：
+参考旧项目 `/Users/user1/Code/rssnews`：
 
 - `build_rss.py` 保持薄入口，调用 `app.main`。
 - `app/` 模块化结构继续沿用：settings、models、helpers、fetchers、pipeline、rss_writer、db、feedback、daily、feedback_server。

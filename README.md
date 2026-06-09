@@ -1,6 +1,6 @@
 # RSSNews v2 热点新闻应用
 
-这个项目是旧 `/Users/amor/Code/rssnews` 的替换版本。部署、目录结构、SQLite 状态库、RSS 静态服务、后台和 systemd 模型基本沿用旧项目；核心变化是新闻入选逻辑：
+这个项目是旧 `/Users/user1/Code/rssnews` 的替换版本。部署、目录结构、SQLite 状态库、RSS 静态服务、后台和 systemd 模型基本沿用旧项目；核心变化是新闻入选逻辑：
 
 - 不再用个人关键词抓新闻。
 - 主要依据 Hacker News 和 NewsAPI top-headlines。
