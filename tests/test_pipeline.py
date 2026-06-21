@@ -293,6 +293,48 @@ class PipelineTests(unittest.TestCase):
                 },
             )
 
+    def test_reposted_external_url_with_different_hn_ids_merges_without_crashing(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            conn = connect_database(Path(tmpdir) / "rssnews.db")
+            init_database(conn)
+            stored = upsert_articles(
+                conn,
+                [
+                    Article(
+                        title="Building Zork Part 2",
+                        url="https://www.dpolakovic.space/blogs/zork-part2",
+                        source="Hacker News",
+                        published_at=now_utc() - timedelta(days=10),
+                        source_type="hn",
+                        hn_id=1001,
+                        score=120,
+                        comments=40,
+                        guid=hn_guid(1001),
+                    ),
+                    Article(
+                        title="Building Zork Part 2",
+                        url="https://www.dpolakovic.space/blogs/zork-part2",
+                        source="Hacker News",
+                        published_at=now_utc(),
+                        source_type="hn",
+                        hn_id=2002,
+                        score=240,
+                        comments=80,
+                        guid=hn_guid(2002),
+                    ),
+                ],
+            )
+
+            count = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
+            row = conn.execute("SELECT hn_id, hn_points, hn_comments FROM articles").fetchone()
+            source_ids = {row[0] for row in conn.execute("SELECT external_id FROM article_sources").fetchall()}
+            self.assertEqual(count, 1)
+            self.assertEqual(stored[0].guid, stored[1].guid)
+            self.assertEqual(row["hn_id"], 2002)
+            self.assertEqual(row["hn_points"], 240)
+            self.assertEqual(row["hn_comments"], 80)
+            self.assertEqual(source_ids, {"1001", "2002"})
+
     def test_dedupe_by_url_keeps_more_informative_article(self) -> None:
         older = Article(
             title="A",
@@ -1308,6 +1350,7 @@ class PipelineTests(unittest.TestCase):
     def test_fetch_hn_algolia_hot_sorts_by_total_heat(self) -> None:
         payload = {
             "hits": [
+                {"objectID": "0", "title": "Too Low", "url": "https://example.com/too-low", "created_at": "2020-01-01T00:00:00Z", "points": 50, "num_comments": 100},
                 {"objectID": "1", "title": "Low", "url": "https://example.com/low", "created_at": "2020-01-01T00:00:00Z", "points": 200, "num_comments": 10},
                 {"objectID": "2", "title": "High", "url": "https://example.com/high", "created_at": "2019-01-01T00:00:00Z", "points": 500, "num_comments": 20},
             ]
@@ -1319,6 +1362,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(items[0].source_type, "hn_hot")
         self.assertEqual(items[0].raw["hn_hot_matched_terms"], ["AI learning"])
         self.assertEqual(items[0].raw["hn_hot_query"], "AI learning")
+        self.assertNotIn("[HN Hot] Too Low", {item.title for item in items})
 
     def test_fetch_hn_algolia_hot_merges_matched_terms_for_same_story(self) -> None:
         def fake_get_json(url: str, params: dict | None = None, **kwargs: object) -> dict:

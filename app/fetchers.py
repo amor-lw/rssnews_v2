@@ -461,8 +461,7 @@ def fetch_hn_algolia_hot_term(query: str, min_points: int = 100, limit: int = 20
     params = {
         "query": query,
         "tags": "story",
-        "numericFilters": f"points>{int(min_points)}",
-        "hitsPerPage": min(max(int(limit), 1), 100),
+        "hitsPerPage": min(max(int(limit) * 5, int(limit), 20), 100),
     }
     data = http_get_json(HN_ALGOLIA_SEARCH, params=params, timeout=20, retries=2)
     output: List[Article] = []
@@ -477,6 +476,8 @@ def fetch_hn_algolia_hot_term(query: str, min_points: int = 100, limit: int = 20
         except Exception:
             created_at = now_utc()
         points = float(item.get("points") or 0)
+        if points <= float(min_points):
+            continue
         comments = int(item.get("num_comments") or 0)
         canonical = canonicalize_url(url)
         summary = f"HN historical hot post · {int(points)} points · {comments} comments"

@@ -256,9 +256,6 @@ def upsert_article(conn: sqlite3.Connection, article: Article, source_type: str 
             row,
         )
     else:
-        existing_hn_id = existing["hn_id"]
-        if row["hn_id"] is not None and existing_hn_id is not None and int(row["hn_id"]) != int(existing_hn_id):
-            raise RuntimeError(f"Refusing to merge different HN ids on canonical URL {row['canonical_url']}")
         conn.execute(
             """
             UPDATE articles SET
@@ -271,7 +268,7 @@ def upsert_article(conn: sqlite3.Connection, article: Article, source_type: str 
               summary=CASE WHEN length(:summary) > length(summary) THEN :summary ELSE summary END,
               content_text=CASE WHEN length(:content_text) > length(content_text) THEN :content_text ELSE content_text END,
               lang=COALESCE(lang, :lang),
-              hn_id=COALESCE(hn_id, :hn_id),
+              hn_id=CASE WHEN :hn_points > hn_points AND :hn_id IS NOT NULL THEN :hn_id ELSE COALESCE(hn_id, :hn_id) END,
               hn_points=MAX(hn_points, :hn_points),
               hn_comments=MAX(hn_comments, :hn_comments),
               source_rank=CASE WHEN :base_score > base_score THEN :source_rank ELSE source_rank END,
